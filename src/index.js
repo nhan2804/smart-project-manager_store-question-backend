@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
 
   socket.on('newQuestion', data => {
     const { roomId, ...rest } = data;
-    io.in(roomId).emit('newQuestion', rest);
+    socket.to(roomId).emit('newQuestion', rest);
   })
 
   socket.on('newAnswer', data => {
