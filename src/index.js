@@ -15,27 +15,32 @@ app.get('/', (req, res, next) => {
 })
 
 const rooms = {
-  1: {
-    id: 1,
-    host: 123,
-    users: []
-  }
+  // 1: {
+  //   id: 1,
+  //   host: 123,
+  //   users: []
+  // }
 } 
 
 io.on("connection", (socket) => {
   socket.on('join', (data) => {
-    const { roomId } = data;
-    if(rooms.id) {
-      
+    const { roomId, user, isHost } = data;
+    socket.join(roomId);
+    if(rooms[roomId]) {
+      const usersList = rooms[roomId].users;
+      if(!usersList.includes(user)) {
+        usersList.push(user);
+        rooms[roomId].users = usersList;
+      }
     } else {
       const newRoom = {
         id: roomId,
-        host: '',
-        users: []
+        host: isHost ? user : '',
+        users: [user]
       }
       rooms[roomId] = newRoom;
-      socket.join(roomId);
     }
+    io.in(roomId).emit('participantsInRoom', rooms[roomId].users);
   });
 
   socket.on('newQuestion', data => {
