@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
 
   socket.on('newAnswer', data => {
     const { roomId, ...rest } = data;
-    socket.to(roomId).emit('newAnswer', rest);
+    io.in(roomId).emit('newAnswer', rest);
   }) 
 
 
